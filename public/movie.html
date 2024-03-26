@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineMatrix - Book Movie</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <script
+      src="https://kit.fontawesome.com/2c36e9b7b1.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+      .seat {
+        width: 30px;
+        height: 25px;
+        border: 1px solid #000;
+        background-color: #616d7e;
+        cursor: pointer;
+        margin: 3px;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        transition: all 0.3s ease;
+      }
+      .seat.occupied {
+        background-color: #7c0a02;
+      }
+      .seat.occupied:hover {
+        background-color: #ea3c53;
+      }
+      .seat:hover {
+        background-color: #a9a9a9;
+      }
+      .seat.selected {
+        background-color: #0f4c75;
+      }
+      .seat.selected:hover {
+        background-color: #0f4c75;
+      }
+
+      .seats {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+      .seat:nth-of-type(2) {
+        margin-right: 10px;
+      }
+      .seat:not(.occupied):hover {
+        scale: 1.2;
+        cursor: pointer;
+      }
+
+      .showcase {
+        padding: 5px 10px;
+        border-radius: 10px;
+        opacity: 0.8;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .showcase li {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+        justify-content: center;
+        margin: 0 10px;
+      }
+      .showcase li small {
+        margin-left: 10px;
+      }
+      .screen object {
+        width: 100%;
+        height: 100%;
+      }
+      .screen object:hover {
+        cursor: pointer;
+        filter: blur(4px);
+        filter: brightness(0.5);
+        filter: hue-rotate(30deg);
+      }
+      .screen {
+        width: 50vh;
+        height: 40vh;
+        margin: 15px 0;
+        background-color: #000;
+        transform: rotateX(-50deg);
+        box-shadow: 0 3px 10px 0 #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="https://www.paypal.com/sdk/js?client-id=AbLHQV1zRrez-Hh3hWtY6n_e5i9UT2dB6gEUbtAqCSU_rVMbUlHtsUVnUJeO009cYuNVgmcN42W1G-hN"></script>
+    <!--navbar-->
+    <nav
+      class="relative w-full flex flex-wrap items-center justify-between py-4 bg-gray-800 text-gray-500 hover:text-gray-700 focus:text-gray-700 shadow-lg"
+    >
+      <div
+        class="container-fluid w-full flex flex-wrap items-center justify-between px-6"
+      >
+        <div
+          class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start"
+        >
+          <a
+            href="#"
+            class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-no-wrap uppercase text-white"
+          >
+            <img
+              src="/images/icon.svg"
+              alt="logo"
+              class="h-8 w-8 inline-block"
+            />
+            Cinematrix
+          </a>
+          <button
+            class="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
+            type="button"
+            onclick="toggleNavbar('example-collapse-navbar')"
+            id="nav-button-icon"
+          >
+            <i class="fas fa-bars" style="color: #fff;" id="nav-icon"></i>
+          </button>
+        </div>
+        <div
+          class="lg:flex flex-grow items-center bg-gray-800 lg:bg-transparent lg:shadow-none hidden"
+          id="example-collapse-navbar"
+        >
+          <ul class="flex flex-col lg:flex-row list-none lg:ml-auto">
+            <li class="flex items-center">
+              <a
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                href="/"
+                ><i
+                  class="fas fa-home text-lg leading-lg text-white opacity-75"
+                ></i
+                ><span class="ml-2">Home</span></a
+              >
+            </li>
+            <li class="flex items-center">
+              <a
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                href="/about"
+                ><i
+                  class="fas fa-info-circle text-lg leading-lg text-white opacity-75"
+                ></i
+                ><span class="ml-2">About</span></a
+              >
+            </li>
+            <li class="flex items-center">
+              <a
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                href="/contact"
+                ><i
+                  class="fas fa-phone text-lg leading-lg text-white opacity-75"
+                ></i
+                ><span class="ml-2">Contact</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!--end of navbar-->
+    <!--movie image on the left with description on right-->
+    <div
+      class="flex flex-col md:flex-row justify-center items-center bg-gray-700"
+    >
+      <div class="w-full md:w-1/3">
+        <img
+          id="movie"
+          class="w-full h-full object-cover rounded-lg shadow-md transparent border-4 border-gray-800"
+          alt="movie"
+        />
+      </div>
+      <div class="w-full md:w-1/2">
+        <div class="flex flex-col justify-center h-full">
+          <div class="px-4 py-2">
+            <h1 id="title" class="text-2xl font-semibold text-indigo-500"></h1>
+            <p id="genre" class="text-lg font-semibold text-gray-300"></p>
+            <p id="releaseDate" class="text-gray-300"></p>
+            <p id="duration" class="text-gray-300">Length</p>
+            <p id="rating" class="text-gray-300">Rating</p>
+          </div>
+          <div class="px-4 py-2">
+            <p id="description" class="text-gray-300">Description</p>
+            <p id="director" class="text-gray-300"></p>
+
+            <!--button to scroll down-->
+            <div class="flex justify-center">
+              <a
+                href="#booking"
+                class="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500 text-white hover:bg-indigo-400 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+              >
+                <i class="fas fa-chevron-down"></i>
+              </a>
+            </div>
+
+            <!--end of button-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--end of movie image and description-->
+    <!--booking section-->
+    <div
+      id="booking"
+      class="flex flex-col justify-center items-center bg-gray-700"
+    >
+      <div class="flex flex-col justify-left items-left">
+        <h1 class="text-2xl font-semibold text-indigo-500">
+          Book your tickets
+        </h1>
+        <p class="text-gray-300">Select your theater and date</p>
+        <!--ticket price-->
+        <div class="flex flex-col justify-left items-left">
+          <h1 class="text-xl font-semibold text-indigo-500">Ticket Price</h1>
+          <p class="text-gray-300" id="ticket-price">$10</p>
+        </div>
+        <!--end of ticket price-->
+        <div class="flex flex-col justify-left items-left">
+          <h1 class="text-xl font-semibold text-indigo-500">Seats Selected</h1>
+          <p class="text-gray-300" id="totalPrice"></p>
+          <p class="text-gray-300" id="seatsSelected"></p>
+        </div>
+      </div>
+      <div class="flex flex-col justify-left items-left">
+        <h1 class="text-xl font-semibold text-indigo-500">Date and Time</h1>
+        <p class="text-gray-300">Select a date and time</p>
+        <div class="flex flex-col md:flex-row justify-center items-center">
+          <div class="flex flex-col justify-left items-left">
+            <label for="date">Date</label>
+            <select
+              id="date"
+              class="bg-gray-800 text-gray-300 border-2 border-gray-800 rounded-md"
+            ></select>
+          </div>
+          <div class="flex flex-col justify-left items-left">
+            <label for="time">Time</label>
+            <select
+              id="time"
+              class="bg-gray-800 text-gray-300 border-2 border-gray-800 rounded-md"
+            ></select>
+          </div>
+        </div>
+      </div>
+      <ul class="showcase">
+        <li>
+          <div class="seat"></div>
+          <small>Available</small>
+        </li>
+        <li>
+          <div class="seat selected"></div>
+          <small>Selected</small>
+        </li>
+        <li>
+          <div class="seat occupied"></div>
+          <small>Occupied</small>
+        </li>
+      </ul>
+      <div class="screen">
+        <object id="video" width="100%" height="100%"></object>
+      </div>
+      <p class="text-gray-300">Screen</p>
+      <div
+        class="flex flex-col md:flex-row justify-center items-center"
+        id="theater"
+      >
+        <div class="seats">
+          <div class="seatRow">
+            <div class="seat" id="seat1A"></div>
+            <div class="seat" id="seat1B"></div>
+            <div class="seat" id="seat1C"></div>
+            <div class="seat" id="seat1D"></div>
+            <div class="seat" id="seat1E"></div>
+            <div class="seat" id="seat1F"></div>
+            <div class="seat" id="seat1G"></div>
+            <div class="seat" id="seat1H"></div>
+          </div>
+          <div class="seatRow">
+            <div class="seat" id="seat2A"></div>
+            <div class="seat" id="seat2B"></div>
+            <div class="seat" id="seat2C"></div>
+            <div class="seat" id="seat2D"></div>
+            <div class="seat" id="seat2E"></div>
+            <div class="seat" id="seat2F"></div>
+            <div class="seat" id="seat2G"></div>
+            <div class="seat" id="seat2H"></div>
+          </div>
+          <div class="seatRow">
+            <div class="seat" id="seat3A"></div>
+            <div class="seat" id="seat3B"></div>
+            <div class="seat" id="seat3C"></div>
+            <div class="seat" id="seat3D"></div>
+            <div class="seat" id="seat3E"></div>
+            <div class="seat" id="seat3F"></div>
+            <div class="seat" id="seat3G"></div>
+            <div class="seat" id="seat3H"></div>
+          </div>
+          <div class="seatRow">
+            <div class="seat" id="seat4A"></div>
+            <div class="seat" id="seat4B"></div>
+            <div class="seat" id="seat4C"></div>
+            <div class="seat" id="seat4D"></div>
+            <div class="seat" id="seat4E"></div>
+            <div class="seat" id="seat4F"></div>
+            <div class="seat" id="seat4G"></div>
+            <div class="seat" id="seat4H"></div>
+          </div>
+          <div class="seatRow">
+            <div class="seat" id="seat5A"></div>
+            <div class="seat" id="seat5B"></div>
+            <div class="seat" id="seat5C"></div>
+            <div class="seat" id="seat5D"></div>
+            <div class="seat" id="seat5E"></div>
+            <div class="seat" id="seat5F"></div>
+            <div class="seat" id="seat5G"></div>
+            <div class="seat" id="seat5H"></div>
+          </div>
+          <div class="seatRow">
+            <div class="seat" id="seat6A"></div>
+            <div class="seat" id="seat6B"></div>
+            <div class="seat" id="seat6C"></div>
+            <div class="seat" id="seat6D"></div>
+            <div class="seat" id="seat6E"></div>
+            <div class="seat" id="seat6F"></div>
+            <div class="seat" id="seat6G"></div>
+            <div class="seat" id="seat6H"></div>
+          </div>
+          <div class="seatRow">
+            <div class="seat" id="seat7A"></div>
+            <div class="seat" id="seat7B"></div>
+            <div class="seat" id="seat7C"></div>
+            <div class="seat" id="seat7D"></div>
+            <div class="seat" id="seat7E"></div>
+            <div class="seat" id="seat7F"></div>
+            <div class="seat" id="seat7G"></div>
+            <div class="seat" id="seat7H"></div>
+          </div>
+          <div class="seatRow">
+            <div class="seat" id="seat8A"></div>
+            <div class="seat" id="seat8B"></div>
+            <div class="seat" id="seat8C"></div>
+            <div class="seat" id="seat8D"></div>
+            <div class="seat" id="seat8E"></div>
+            <div class="seat" id="seat8F"></div>
+            <div class="seat" id="seat8G"></div>
+            <div class="seat" id="seat8H"></div>
+          </div>
+        </div>
+      </div>
+      <h1 class="text-2xl text-gray-300">If you don't see any seats, please reselect the date and time.</h1>
+      <!--payment section with paypal-->
+      <div class="payment">
+        <div class="flex flex-col justify-center items-center">
+          <h2 class="text-2xl text-gray-300">Payment</h2>
+          <div class="paypal">
+            <div id="paypal-button-container"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--end of booking section-->
+    <!--footer-->
+    <footer class="bg-gray-800">
+      <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+        <nav
+          class="-mx-5 -my-2 flex flex-wrap justify-center"
+          aria-label="Footer"
+        >
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              About
+            </a>
+          </div>
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              Blog
+            </a>
+          </div>
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              Jobs
+            </a>
+          </div>
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              Press
+            </a>
+          </div>
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              Partners
+            </a>
+          </div>
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              Contact Us
+            </a>
+          </div>
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              Privacy
+            </a>
+          </div>
+          <div class="px-5 py-2">
+            <a href="#" class="text-base text-gray-400 hover:text-gray-300">
+              Terms
+            </a>
+          </div>
+        </nav>
+      </div>
+    </footer>
+    <!--end of footer-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/jquery@3.6.1/dist/jquery.min.js"></script>
+    <script src="movie.js"></script>
+  </body>
+</html>

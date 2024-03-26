@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Movies</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <style>
+      .container {
+        margin-top: 50px;
+      }
+      body {
+        background-color: #a6a6a6;
+      }
+      .overview {
+        word-wrap: break-word;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 4em;
+        line-height: 1.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/admin/">
+        <img
+          src="/images/icon.png"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt=""
+          loading="lazy"
+        />
+        <span class="navbar-brand mb-0 h1">CinemaMatrix</span>
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+        onclick="toggleNav()"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/movies">Movies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/add-theatre">Add Theatre</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/chb">Check Booking</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="logout()">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="d-inline flex-row">
+        <h3 id="movie-title">Add Movie</h3>
+        <!--input for imdb and button import data-->
+        <div class="form-group">
+          <label for="imdb">IMDB ID</label>
+          <input
+            type="text"
+            class="form-control"
+            id="imdb"
+            name="imdb"
+            placeholder="Enter IMDB ID"
+          />
+        </div>
+        <button type="button" class="btn btn-primary" onclick="importData()">
+          Import Data
+        </button>
+        <form action="/api/v1/admin/movies" method="POST" id="addMovie">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              placeholder="Enter Title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="10"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="overview">Overview</label>
+            <textarea
+              class="form-control"
+              id="overview"
+              name="overview"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="image">Image</label>
+            <input
+              type="text"
+              class="form-control"
+              id="image"
+              name="image"
+              placeholder="Enter Image URL"
+            />
+          </div>
+          <div class="form-group">
+            <label for="rating">Rating</label>
+            <input
+              type="number"
+              class="form-control"
+              id="rating"
+              name="rating"
+              placeholder="Enter Rating"
+              step="0.1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="year">Release Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="year"
+              name="year"
+              placeholder="Enter Year"
+            />
+          </div>
+          <div class="form-group">
+            <label for="genre">Genre</label>
+            <select class="form-control" id="genre" name="genre">
+              <option value="Action">Action</option>
+              <option value="Adventure">Adventure</option>
+              <option value="Comedy">Comedy</option>
+              <option value="Crime">Crime</option>
+              <option value="Drama">Drama</option>
+              <option value="Fantasy">Fantasy</option>
+              <option value="Historical">Historical</option>
+              <option value="Horror">Horror</option>
+              <option value="Mystery">Mystery</option>
+              <option value="Political">Political</option>
+              <option value="Romance">Romance</option>
+              <option value="Science Fiction">Science Fiction</option>
+              <option value="Thriller">Thriller</option>
+              <option value="Western">Western</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="duration">Duration</label>
+            <input
+              type="text"
+              class="form-control"
+              id="duration"
+              name="duration"
+              placeholder="Enter Duration"
+            />
+          </div>
+          <div class="form-group">
+            <label for="language">Language</label>
+            <input
+              type="text"
+              class="form-control"
+              id="language"
+              name="language"
+              placeholder="Enter Language"
+            />
+          </div>
+          <div class="form-group">
+            <label for="director">Director</label>
+            <input
+              type="text"
+              class="form-control"
+              id="director"
+              name="director"
+              placeholder="Enter Director"
+            />
+          </div>
+          <div class="form-group">
+            <label for="trailer">Trailer</label>
+            <input
+              type="text"
+              class="form-control"
+              id="trailer"
+              name="trailer"
+              placeholder="Enter Trailer URL"
+            />
+            <button type="submit" class="btn btn-primary">Add</button>
+          </div>
+        </form>
+
+        <h3>Movies</h3>
+        <table class="table table-striped" id="moviesTable">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th th scope="col">Title</th>
+              <th scope="col">Description</th>
+              <th scope="col">Year</th>
+              <th scope="col">Genre</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.min.js"
+      type="text/javascript"
+    ></script>
+    <script>
+      //validation
+      function validateToken() {
+        fetch("/api/v1/admin/validation/" + localStorage.getItem("token"), {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status == "success") {
+              console.log(data);
+            } else {
+              window.location.href = "/admin/login";
+            }
+          });
+      }
+      if (!localStorage.getItem("token")) {
+        window.location.href = "/admin/login";
+        localStorage.removeItem("token");
+      }
+      validateToken();
+      //get movies
+      function getMovies() {
+        fetch("/api/v1/movies", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            let movies = data;
+            let output = "";
+            movies.forEach((movie) => {
+              output += `
+                    <tr>
+                    <th scope="row">${movie.id}</th>
+                    <td>${movie.name}</td>
+                    <td>${movie.releaseDate}</td>
+                    <td>${movie.genre}</td>
+                    <td><button class="btn btn-danger" onclick="deleteMovie('${
+                      movie.id
+                    }')">Delete</button></td>
+                    <td><button class="btn btn-primary" onclick="playMovie('${
+                      movie.id
+                    }',${movie.playing})">${
+                movie.playing
+                  ? "Stop Movie In Theater"
+                  : "Play Movie In Theater"
+              }</button></td>
+                </tr>
+                    `;
+            });
+            document.getElementById("moviesTable").innerHTML = output;
+          });
+      }
+      //add movie
+      $("#addMovie").submit(function (e) {
+        e.preventDefault();
+        const data = JSON.stringify({
+          name: $("#title").val(),
+          description: $("#description").val(),
+          image: $("#image").val(),
+          rating: $("#rating").val(),
+          releaseDate: $("#year").val(),
+          genre: $("#genre").val(),
+          overview: $("#overview").val(),
+          duration: $("#duration").val(),
+          language: $("#language").val(),
+          director: $("#director").val(),
+          trailer: $("#trailer").val(),
+        });
+        if (data) {
+          $.ajax({
+            url: "/api/v1/admin/movies",
+            type: "POST",
+            contentType: "application/json",
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            async: false,
+            data: data,
+          }).done(function (data) {
+            window.location.href = "/admin/movies";
+          });
+        }
+      });
+      getMovies();
+      //delete movie
+      function deleteMovie(id) {
+        fetch("/api/v1/admin/movies/" + id, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            getMovies();
+          });
+      }
+      //play movie
+      function playMovie(id, playing) {
+        if (playing == true) {
+          var data = {
+            playing: false,
+          };
+          fetch("/api/v1/admin/movies/" + id + "/play", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              getMovies();
+            });
+        } else {
+          var data = {
+            playing: true,
+          };
+          fetch("/api/v1/admin/movies/" + id + "/play", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(data),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              getMovies();
+            });
+        }
+      }
+      function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/admin/login";
+      }
+      function toggleNav() {
+        let nav = document.getElementById("navbarNav");
+        if (nav.classList.contains("show")) {
+          nav.classList.remove("show");
+        } else {
+          nav.classList.add("show");
+        }
+      }
+      function convertTime(time) {
+        time = time.replace("min", "").replace("mins", "");
+        time = parseInt(time);
+        var hours = Math.floor(time / 60);
+        var minutes = time % 60;
+        return hours + "h " + minutes + "m";
+      }
+      function convertDate(date) {
+        //date in space like 23 May 2020 return 2023-03-24
+        date = date.split(" ");
+        let month = date[1];
+        let day = date[0];
+        let year = date[2];
+        switch (month) {
+          case "Jan":
+            month = "01";
+            break;
+          case "Feb":
+            month = "02";
+            break;
+          case "Mar":
+            month = "03";
+            break;
+          case "Apr":
+            month = "04";
+            break;
+          case "May":
+            month = "05";
+            break;
+          case "Jun":
+            month = "06";
+            break;
+          case "Jul":
+            month = "07";
+            break;
+          case "Aug":
+            month = "08";
+            break;
+          case "Sep":
+            month = "09";
+            break;
+          case "Oct":
+            month = "10";
+            break;
+          case "Nov":
+            month = "11";
+            break;
+          case "Dec":
+            month = "12";
+            break;
+        }
+        return year + "-" + month + "-" + day;
+      }
+      function importData() {
+        fetch(
+          "http://localhost:3001/https://www.omdbapi.com/?apikey=a1dcab41&i=" +
+            $("#imdb").val(),
+          {
+            method: "GET",
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.Response == "False") {
+              alert("Failed to import data,please manually enter the data");
+            }
+            $("#title").val(data.Title || "Please enter title");
+            $("#description").val(data.Plot || "Please enter description");
+            $("#image").val(data.Poster || "Please enter image url");
+            //if rating is not available or is N/A then set it to 0
+            $("#rating").val(data.imdbRating == "N/A" ? 0 : data.imdbRating);
+            $("#year").val(convertDate(data.Released) || "Please enter year");
+            $("#genre").val(data.Genre.split(",")[0]);
+            $("#overview").val("Please enter overview");
+            $("#duration").val(
+              convertTime(data.Runtime) || "Please enter duration"
+            );
+            $("#language").val(data.Language || "Please enter language");
+            $("#director").val(data.Director || "Please enter director");
+            $("#trailer").val("Please enter trailer url");
+          });
+      }
+    </script>
+  </body>
+</html>

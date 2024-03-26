@@ -1,0 +1,1 @@
+Movie tickets can be purchased online through a movie ticket system. This system would allow customers to select a movie and time, and then purchase their tickets through the system. The system would then generate a confirmation code that the customer could use to pick up their tickets at the theater.

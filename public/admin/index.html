@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <style>
+      .container {
+        margin-top: 50px;
+      }
+      body {
+        background-color: #a6a6a6;
+      }
+    </style>
+  </head>
+  <body>
+    <!--navbar with mobile view-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/admin/">
+        <img
+          src="/images/icon.png"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt=""
+          loading="lazy"
+        />
+        <span class="navbar-brand mb-0 h1">CinemaMatrix</span>
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+        onclick="toggleNav()"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/movies">Movies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/add-theatre">Add Theatre</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/chb">Check Booking</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="logout()">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Dashboard</h1>
+          <!--quick stats-->
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Movies</h5>
+                  <p class="card-text">
+                    Total Movies: <span id="total-movies"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--upload image and image type-->
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Upload Image</h1>
+          <form id="upload-image-form">
+            <div class="form-group">
+              <label for="image">Image</label>
+              <input type="file" class="form-control" id="image" />
+            </div>
+            <div class="form-group">
+              <label for="image-type">Image Type</label>
+              <select class="form-control" id="image-type">
+                <option value="poster">Poster</option>
+              </select>
+            </div>
+            <input type="hidden" id="file-url" class="form-control" />
+            <br />
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      //validation
+      function validateToken() {
+        fetch("/api/v1/admin/validation/" + localStorage.getItem("token"), {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status == "success") {
+              console.log(data);
+            } else {
+              window.location.href = "/admin/login";
+            }
+          });
+      }
+      if (!localStorage.getItem("token")) {
+        window.location.href = "/admin/login";
+        localStorage.removeItem("token");
+      }
+      validateToken();
+      //quick stats
+      function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/admin/login";
+      }
+      function getQuickStats() {
+        fetch("/api/v1/admin/quickstats", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status == "success") {
+              document.getElementById("total-movies").innerHTML =
+                data.stats.movies;
+            }
+          });
+      }
+      getQuickStats();
+      //upload image
+      document
+        .getElementById("upload-image-form")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+          let image = document.getElementById("image").files[0];
+          let imageType = document.getElementById("image-type").value;
+          let formData = new FormData();
+          formData.append("image", image);
+          fetch("/api/v1/admin/upload-image", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+            body: formData,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.status == "success") {
+                document.getElementById("file-url").value = data.image;
+                document.getElementById("file-url").type = "text";
+              }
+            });
+        });
+      function toggleNav() {
+        let nav = document.getElementById("navbarNav");
+        if (nav.classList.contains("show")) {
+          nav.classList.remove("show");
+        } else {
+          nav.classList.add("show");
+        }
+      }
+    </script>
+  </body>
+</html>

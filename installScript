@@ -3,7 +3,7 @@ Repo: Cinematrix
 Version: 1.0
 Description: A fake movie booking site
 # Commands
-Clone: https://github.com/babymonie/cinematrix
+Clone: github.com/babymonie/cinematrix
 Install: auto
 Setup:
 # Optional
